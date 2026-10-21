@@ -96,8 +96,26 @@ export async function init() {
   await bootstrapPins();
 }
 
+async function waitForDatabase() {
+  const onRailway = !!(process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_PROJECT_ID);
+  if (onRailway && !process.env.DATABASE_URL) {
+    throw new Error('DATABASE_URL is not set. In Railway: add a PostgreSQL database to the project, then in this service\'s Variables add DATABASE_URL = ${{Postgres.DATABASE_URL}}');
+  }
+  // The database may still be starting right after a deploy; retry for up to ~60 seconds.
+  for (let i = 1; ; i++) {
+    try {
+      await pool.query('SELECT 1');
+      return;
+    } catch (err) {
+      if (i >= 20) throw new Error(`cannot connect to the database (${err.code || err.message}). Check DATABASE_URL.`);
+      console.log(`[db] waiting for database (${err.code || err.message}), attempt ${i}`);
+      await new Promise((r) => setTimeout(r, 3000));
+    }
+  }
+}
+
 async function main() {
-  if (config.isProd && !config.databaseUrl.startsWith('postgres')) throw new Error('DATABASE_URL is required');
+  await waitForDatabase();
   await init();
   const app = createApp();
   const server = app.listen(config.port, () => console.log(`[server] listening on ${config.port}`));
