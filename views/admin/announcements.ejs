@@ -1,0 +1,15 @@
+<%- include('_top') %>
+<div class="block-head"><h1>מודעות</h1><a class="more btn gold sm" href="/admin/announcements/new">+ נייע מודעה</a></div>
+<div class="table-wrap"><table class="list">
+  <thead><tr><th>קעפל</th><th>סניף</th><th>סטאטוס</th><th>טעלעגראם</th><th></th></tr></thead>
+  <tbody>
+  <% rows.forEach(function (a) { %>
+    <tr><td><%= a.title %></td><td><%= a.branch ? branches.find(function (b) { return b.id === a.branch; }).name : 'די גאנצע ישיבה' %></td>
+      <td><%- include('_status', { s: a.published ? 'published' : 'hidden' }) %><%= a.featured ? ' ★' : '' %></td>
+      <td><% if (a.tg_status) { %><%- include('_status', { s: a.tg_status }) %><% } else { %><span class="muted small">נישט געשיקט</span><% } %></td>
+      <td><a class="btn ghost sm" href="/admin/announcements/<%= a.id %>/edit">רעדאקטירן</a></td></tr>
+  <% }) %>
+  <% if (!rows.length) { %><tr><td colspan="5" class="muted">קיין מודעות.</td></tr><% } %>
+  </tbody>
+</table></div>
+<%- include('_bottom') %>

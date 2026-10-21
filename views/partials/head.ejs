@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="yi" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><%= title ? title + ' · ' : '' %><%= settings.school_name %></title>
+<meta name="description" content="<%= settings.school_tagline %>">
+<% if (locals.isAdminArea) { %><meta name="robots" content="noindex"><% } %>
+<link rel="icon" href="/logo">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700&family=Heebo:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<a class="skip" href="#main">גיין צום אינהאלט</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="/">
+      <img src="/logo" alt="" width="44" height="52">
+      <span class="brand-name"><%= settings.school_name %><span class="brand-sub">דאטנבאזע פון שמחות</span></span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav">תפריט ☰</button>
+    <nav class="nav" id="main-nav" aria-label="הויפט תפריט">
+      <a href="/" <%- path === '/' ? 'aria-current="page"' : '' %>>היים</a>
+      <a href="/feed" <%- path === '/feed' ? 'aria-current="page"' : '' %>>אלע שמחות</a>
+      <a href="/calendar" <%- path === '/calendar' ? 'aria-current="page"' : '' %>>קאלענדאר</a>
+      <a href="/boys" <%- path === '/boys' ? 'aria-current="page"' : '' %>>בחורים</a>
+      <a href="/announcements" <%- path === '/announcements' ? 'aria-current="page"' : '' %>>מודעות</a>
+      <a href="/search" <%- path === '/search' ? 'aria-current="page"' : '' %>>זוכן</a>
+      <% if (admin) { %><a href="/admin">פארוואלטונג</a><% } %>
+    </nav>
+  </div>
+</header>
+<% if (admin) { %>
+<div class="admin-bar"><div class="wrap">
+  <span>אריינגעלאגט אלס <strong><%= admin.roleName %></strong></span>
+  <a href="/admin">פארוואלטונג</a>
+  <a href="/admin/occasions/new">+ נייער רעקארד</a>
+  <form method="post" action="/admin/logout"><input type="hidden" name="_csrf" value="<%= admin.csrf %>"><button class="btn ghost sm" type="submit">ארויסגיין</button></form>
+</div></div>
+<% } %>
+<main id="main">

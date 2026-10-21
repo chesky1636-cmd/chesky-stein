@@ -1,0 +1,32 @@
+<%- include('_top') %>
+<h1><%= title %></h1>
+<form class="card" method="post" action="<%= v.id ? '/admin/announcements/' + v.id : '/admin/announcements' %>" enctype="multipart/form-data">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <div class="field"><label for="a-title">קעפל</label><input id="a-title" name="title" required maxlength="200" value="<%= v.title || '' %>"></div>
+  <div class="field"><label for="a-body">טעקסט</label><textarea id="a-body" name="body" maxlength="8000"><%= v.body || '' %></textarea></div>
+  <div class="row">
+    <div class="field"><label for="a-branch">סניף</label><select id="a-branch" name="branch"><option value="">די גאנצע ישיבה</option><% branches.forEach(function (b) { %><option value="<%= b.id %>" <%= v.branch === b.id ? 'selected' : '' %>><%= b.name %></option><% }) %></select></div>
+    <div class="field"><label for="a-date">דאטום פון געשעעניש (אפציאנאל)</label><input id="a-date" type="date" name="eventDate" value="<%= v.eventDate || '' %>"></div>
+  </div>
+  <div class="actions">
+    <label class="check"><input type="checkbox" name="published" value="1" <%= v.published ? 'checked' : '' %>> פובליקירט</label>
+    <label class="check"><input type="checkbox" name="featured" value="1" <%= v.featured ? 'checked' : '' %>> הויפט מודעה (ווייזן אויף דער היים בלאט)</label>
+  </div>
+  <div class="field">
+    <% if (v.mediaId) { %><div class="thumbs"><figure><img src="/admin/media/<%= v.mediaId %>/thumb.webp" alt=""><figcaption><label class="check"><input type="checkbox" name="removePicture" value="1"> אראפנעמען</label></figcaption></figure></div><% } %>
+    <label for="a-pic"><%= v.mediaId ? 'פארביטן בילד' : 'בילד (אפציאנאל)' %></label><input id="a-pic" type="file" name="picture" accept="image/*">
+  </div>
+  <fieldset>
+    <legend>טעלעגראם</legend>
+    <% if (telegramReady) { %>
+      <label class="check"><input type="checkbox" name="sendTelegram" value="1"> שיקן די מודעה צום טעלעגראם קאנאל</label>
+      <div class="hint">נאר ווען איר צייכנט דאס אן ווערט די מודעה געשיקט. מודעות ווערן נישט אויטאמאטיש געשיקט.</div>
+    <% } else { %><div class="muted small">טעלעגראם איז נישט קאנפיגורירט (באט טאקען אדער קאנאל פעלט).</div><% } %>
+    <% if (tgLast) { %><div class="small">לעצטע שיקונג: <%- include('_status', { s: tgLast.status }) %> <%= tgLast.sent_at ? new Date(tgLast.sent_at).toLocaleString('he-IL') : '' %> <%= tgLast.error || '' %></div><% } %>
+  </fieldset>
+  <div class="actions"><button class="btn gold" type="submit">אפהיטן</button><a class="btn ghost" href="/admin/announcements">צוריק</a></div>
+</form>
+<% if (v.id) { %>
+<form class="block" method="post" action="/admin/announcements/<%= v.id %>/delete" data-confirm="אויסמעקן די מודעה?"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn danger" type="submit">אויסמעקן</button></form>
+<% } %>
+<%- include('_bottom') %>

@@ -1,0 +1,49 @@
+<%
+  var b = (branchId && base !== ('/branch/' + branchId)) ? '&branch=' + branchId : '';
+  var link = function (y, m, d) { return base + '?y=' + y + '&m=' + m + b + (d ? '&date=' + d : '') + '#calendar'; };
+  var frag = function (y, m, d) { return '/calendar/fragment?y=' + y + '&m=' + m + (branchId ? '&branch=' + branchId : '') + (d ? '&date=' + d : '') + '&base=' + (base === '/calendar' ? 'calendar' : (base === '/' ? 'home' : 'branch')); };
+%>
+<div class="cal" data-cal>
+  <div class="cal-head">
+    <div class="cal-nav">
+      <a class="btn ghost sm" href="<%= link(cal.prevYear.year, cal.prevYear.month) %>" data-frag="<%= frag(cal.prevYear.year, cal.prevYear.month) %>" aria-label="פריערדיגע יאר">«</a>
+      <a class="btn ghost sm" href="<%= link(cal.prev.year, cal.prev.month) %>" data-frag="<%= frag(cal.prev.year, cal.prev.month) %>" aria-label="פריערדיגער חודש">‹ <%= h.monthName(cal.prev.month, cal.prev.year) %></a>
+    </div>
+    <div class="cal-title" aria-live="polite"><strong><%= cal.name %> <%= cal.yearText %></strong><span><%= cal.gregRange %><%= cal.leap ? ' · שנה מעוברת' : '' %></span></div>
+    <div class="cal-nav">
+      <a class="btn ghost sm" href="<%= link(cal.next.year, cal.next.month) %>" data-frag="<%= frag(cal.next.year, cal.next.month) %>" aria-label="קומענדיגער חודש"><%= h.monthName(cal.next.month, cal.next.year) %> ›</a>
+      <a class="btn ghost sm" href="<%= link(cal.nextYear.year, cal.nextYear.month) %>" data-frag="<%= frag(cal.nextYear.year, cal.nextYear.month) %>" aria-label="קומענדיגע יאר">»</a>
+    </div>
+  </div>
+  <form class="cal-jump" method="get" action="<%= base %>#calendar" data-cal-jump>
+    <% if (b) { %><input type="hidden" name="branch" value="<%= branchId %>"><% } %>
+    <label class="sr-only" for="cal-m">חודש</label>
+    <select id="cal-m" name="m"><% cal.months.forEach(function (mm) { %><option value="<%= mm.month %>" <%= mm.month === cal.month ? 'selected' : '' %>><%= mm.name %></option><% }) %></select>
+    <label class="sr-only" for="cal-y">יאר</label>
+    <select id="cal-y" name="y"><% cal.years.forEach(function (yy) { %><option value="<%= yy.year %>" <%= yy.year === cal.year ? 'selected' : '' %>><%= yy.text %></option><% }) %></select>
+    <button class="btn sm" type="submit">גיי</button>
+    <a class="btn ghost sm" href="<%= base %><%= b ? '?' + b.slice(1) : '' %>#calendar" data-frag="<%= frag('', '') %>">היינט</a>
+    <span class="small muted"><%= cal.eventCount %> שמחות אין דעם חודש</span>
+  </form>
+  <table role="grid" aria-label="<%= cal.name %> <%= cal.yearText %>">
+    <thead><tr><% h.WEEKDAYS_SHORT.forEach(function (w, i) { %><th scope="col" abbr="<%= h.WEEKDAYS[i] %>"><%= w %></th><% }) %></tr></thead>
+    <tbody>
+    <% cal.weeks.forEach(function (week) { %><tr>
+      <% week.forEach(function (c) { if (!c) { %><td class="blank"></td><% } else { %>
+      <td class="<%= c.isToday ? 'today ' : '' %><%= c.isSelected ? 'selected ' : '' %><%= c.dow === 6 ? 'shabbos' : '' %>">
+        <a class="day" href="<%= link(cal.year, cal.month, c.iso) %>" data-frag="<%= frag(cal.year, cal.month, c.iso) %>" aria-label="<%= c.hDayText %> <%= cal.name %>, <%= c.gDay %> <%= c.gMonthName %><%= c.events.length ? ', ' + c.events.length + ' שמחות' : '' %>">
+          <span class="hd"><%= c.hDayText %></span>
+          <span class="gd"><%= c.gDay %><%= c.gDay === 1 || c.hDay === 1 ? ' ' + c.gMonthName : '' %></span>
+          <% c.holidays.slice(0, 1).forEach(function (x) { %><span class="hol"><%= x %></span><% }) %>
+          <% c.events.slice(0, 2).forEach(function (e) { %><span class="ev"><%= e.category.name %>: <%= e.boy.name %></span><% }) %>
+          <% if (c.events.length > 2) { %><span class="ev">+<%= c.events.length - 2 %></span><% } %>
+          <% if (c.events.length) { %><span class="dot-row"><% c.events.slice(0, 3).forEach(function () { %><span class="dot"></span><% }) %></span><% } %>
+        </a>
+      </td>
+      <% } }) %>
+    </tr><% }) %>
+    </tbody>
+  </table>
+  <div class="cal-legend">דריקט אויף א טאג צו זען די שמחות. א שמחה וואס איז פארגעקומען נאך שקיעה ווערט געוויזן אויפן קומענדיגן אידישן טאג.</div>
+  <%- include('day-panel', { day: day }) %>
+</div>

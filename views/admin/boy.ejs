@@ -1,0 +1,61 @@
+<%- include('_top') %>
+<div class="block-head"><h1><%= boy.official_name %></h1><a class="more" href="/boy/<%= boy.id %>">עפנטלעכער פראפיל ›</a></div>
+<% if (boy.merged_into) { %><div class="notice warn">דער פראפיל איז צוזאמגעשטעלט מיט <a href="/admin/boys/<%= boy.merged_into %>">#<%= boy.merged_into %></a>.</div><% } %>
+<div class="grid two">
+  <form class="card" method="post" action="/admin/boys/<%= boy.id %>" enctype="multipart/form-data">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <h2>פרטים</h2>
+    <div class="field"><label for="e-name">אפיציעלער נאמען</label><input id="e-name" name="name" required maxlength="120" value="<%= boy.official_name %>"></div>
+    <div class="field"><label for="e-branch">סניף</label><select id="e-branch" name="branch"><% branches.forEach(function (b) { %><option value="<%= b.id %>" <%= boy.branch === b.id ? 'selected' : '' %>><%= b.name %></option><% }) %></select></div>
+    <div class="field"><label for="e-notes">נאטיצן (נאר פאר אדמיניסטראטארן)</label><textarea id="e-notes" name="notes" maxlength="2000"><%= boy.admin_notes || '' %></textarea></div>
+    <div class="field"><label for="e-photo"><%= boy.photo_media_id ? 'פארביטן די בילד' : 'בילד' %></label><input id="e-photo" type="file" name="photo" accept="image/*"></div>
+    <button class="btn gold" type="submit">אפהיטן</button>
+  </form>
+  <div class="card">
+    <h2>בילד</h2>
+    <% if (boy.photo_media_id) { %>
+      <div class="thumbs"><figure><img src="/admin/media/<%= boy.photo_media_id %>/thumb.webp" alt=""></figure></div>
+      <form method="post" action="/admin/boys/<%= boy.id %>/photo/remove" data-confirm="אראפנעמען די בילד?"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn danger sm" type="submit">אראפנעמען בילד</button></form>
+    <% } else { %><div class="empty small">קיין בילד.</div><% } %>
+    <h2>אנדערע נעמען / אויסלייגן</h2>
+    <ul class="cat-list">
+      <% aliases.forEach(function (a) { %>
+      <li><span class="who"><%= a.alias %></span><form method="post" action="/admin/boys/<%= boy.id %>/aliases/<%= a.id %>/delete"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn ghost sm" type="submit">אויסמעקן</button></form></li>
+      <% }) %>
+    </ul>
+    <form method="post" action="/admin/boys/<%= boy.id %>/aliases" class="actions">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <label class="sr-only" for="alias">נייער אויסלייג</label><input id="alias" name="alias" required maxlength="120" placeholder="נייער אויסלייג">
+      <button class="btn sm" type="submit">צולייגן</button>
+    </form>
+  </div>
+</div>
+
+<section class="block">
+  <div class="block-head"><h2>רעקארדס</h2><a class="more btn gold sm" href="/admin/occasions/new?boy=<%= boy.id %>">+ שמחה פאר דעם בחור</a></div>
+  <div class="table-wrap"><table class="list">
+    <thead><tr><th>קאטעגאריע</th><th>דאטום</th><th>מקור</th><th>סטאטוס</th><th></th></tr></thead>
+    <tbody>
+    <% occasions.forEach(function (o) { %><tr><td><span class="tag cat-<%= o.cat_kind %>"><%= o.cat_name %></span></td><td><%= o.heb_date_text %> · <span class="small"><%= o.greg_date %></span></td><td><%= o.source === 'telegram' ? 'טעלעגראם' : 'מאנועל' %></td><td><%- include('_status', { s: o.status }) %><% if (o.duplicate_of) { %> <span class="tag">דופליקאט</span><% } %></td><td><a class="btn ghost sm" href="/admin/occasions/<%= o.id %>/edit">רעדאקטירן</a></td></tr><% }) %>
+    <% if (!occasions.length) { %><tr><td colspan="5" class="muted">קיין רעקארדס.</td></tr><% } %>
+    </tbody>
+  </table></div>
+</section>
+
+<% if (similar.length) { %>
+<section class="block card">
+  <h2>מעגליכע דופליקאטן</h2>
+  <ul class="cat-list">
+  <% similar.forEach(function (s) { %>
+    <li><span class="who"><a href="/admin/boys/<%= s.id %>"><%= s.official_name %></a> · <span class="small muted"><%= (branches.find(function (b) { return b.id === s.branch; }) || {}).name %></span></span>
+      <% if (admin.isSuper) { %><form method="post" action="/admin/boys/<%= boy.id %>/merge" data-confirm="צוזאמשטעלן? אלע רעקארדס פון דעם בחור וועלן אריבערגיין צו <%= s.official_name %>."><input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="targetId" value="<%= s.id %>"><button class="btn ghost sm" type="submit">צוזאמשטעלן אין דעם</button></form><% } %>
+    </li>
+  <% }) %>
+  </ul>
+  <% if (!admin.isSuper) { %><p class="small muted">צוזאמשטעלן פראפילן קען נאר א הויפט-אדמיניסטראטאר. מען קען אבער פארבינדן יעדן רעקארד צו דעם ריכטיגן בחור דורך רעדאקטירן דעם רעקארד.</p><% } %>
+</section>
+<% } %>
+<% if (!occasions.length) { %>
+<form method="post" action="/admin/boys/<%= boy.id %>/delete" data-confirm="אויסמעקן דעם בחור?"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn danger" type="submit">אויסמעקן בחור</button></form>
+<% } %>
+<%- include('_bottom') %>

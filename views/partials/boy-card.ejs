@@ -1,0 +1,4 @@
+<a class="card occ-top" href="<%= b.url %>">
+  <% if (b.thumb) { %><img class="avatar" src="<%= b.thumb %>" alt="" loading="lazy" width="44" height="44"><% } else { %><span class="avatar" aria-hidden="true"><%= b.name.trim().charAt(0) %></span><% } %>
+  <span><span class="occ-name"><%= b.name %></span><br><span class="small muted"><%= b.branch.name %><%= b.occasionCount !== undefined ? ' · ' + b.occasionCount + ' שמחות' : '' %></span></span>
+</a>

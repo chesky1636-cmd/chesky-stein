@@ -1,0 +1,8 @@
+<% if (day) { %>
+<div class="day-panel" id="day-panel" tabindex="-1">
+  <h3><%= h.hebrewFromIso(day.iso).text %> · <span class="muted small"><%= h.weekdayName(day.iso) %>, <%= h.gregText(day.iso) %></span></h3>
+  <% if (day.events.length) { %>
+  <div class="grid two"><% day.events.forEach(function (o) { %><%- include('occ-card', { o: o }) %><% }) %></div>
+  <% } else { %><div class="empty">קיין שמחות אויף דעם טאג.</div><% } %>
+</div>
+<% } %>

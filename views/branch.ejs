@@ -1,0 +1,44 @@
+<%- include('partials/head') %>
+<div class="wrap">
+  <section class="hero">
+    <div class="hero-grid">
+      <div class="hero-card main">
+        <div class="small muted"><a href="/">היים</a> › סניף</div>
+        <h1><%= branch.name %></h1>
+        <% if (branch.description) { %><p class="muted"><%= branch.description %></p><% } %>
+        <form class="search-form" method="get" action="/search" role="search" data-suggest data-branch="<%= branch.id %>">
+          <input type="hidden" name="branch" value="<%= branch.id %>">
+          <label class="sr-only" for="q">זוכן אין <%= branch.name %></label>
+          <input type="search" id="q" name="q" placeholder="זוכן אין <%= branch.name %>…" autocomplete="off">
+          <button class="btn gold" type="submit">זוכן</button>
+          <div class="suggest hidden" role="listbox"></div>
+        </form>
+      </div>
+      <div class="hero-card">
+        <div class="lbl muted">שידוכים אין <%= branch.name %></div>
+        <div class="today-date"><%= stats.byBranch[branch.id].total %></div>
+        <div class="small muted">דאס יאר: <%= stats.byBranch[branch.id].thisYear %> · די גאנצע ישיבה: <%= stats.total %></div>
+        <div class="ornament">✦</div>
+        <div class="small muted"><%= today.hebrew.text %> · <%= today.greg %></div>
+      </div>
+    </div>
+  </section>
+  <nav class="chips" aria-label="אנדערע סניפים">
+    <a class="chip" href="/">אלע סניפים</a>
+    <% branches.forEach(function (b) { %><a class="chip" href="/branch/<%= b.id %>" aria-current="<%= b.id === branch.id %>"><%= b.name %></a><% }) %>
+  </nav>
+  <section class="block" aria-labelledby="stats-h">
+    <div class="block-head"><h2 id="stats-h">סטאטיסטיק פון אלע סניפים</h2></div>
+    <%- include('partials/stats') %>
+  </section>
+
+  <%- include('partials/dashboard', { base: '/branch/' + branch.id }) %>
+
+  <section class="block" aria-labelledby="boys-h">
+    <div class="block-head"><h2 id="boys-h">בחורים אין <%= branch.name %></h2><span class="muted"><%= boys.length %></span></div>
+    <% if (boys.length) { %>
+    <div class="grid"><% boys.forEach(function (b) { %><%- include('partials/boy-card', { b: b }) %><% }) %></div>
+    <% } else { %><div class="empty">נאך קיין בחורים אין דעם סניף.</div><% } %>
+  </section>
+</div>
+<%- include('partials/foot') %>

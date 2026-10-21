@@ -1,0 +1,6 @@
+<nav class="chips" aria-label="פילטער לויט סניף">
+  <a class="chip" href="<%= base %><%= extra ? '?' + extra : '' %>" aria-current="<%= !branchId %>">אלע סניפים</a>
+  <% branches.forEach(function (b) { %>
+  <a class="chip" href="<%= base %>?branch=<%= b.id %><%= extra ? '&' + extra : '' %>" aria-current="<%= branchId === b.id %>"><%= b.name %></a>
+  <% }) %>
+</nav>

@@ -1,0 +1,26 @@
+<%- include('_top') %>
+<h1>טעלעגראם אימפארטן</h1>
+<p class="muted">דערקענטע מודעות ווערן אויטאמאטיש פובליקירט. מודעות וואס זענען נישט דערקענט ווארטן דא אויף א קאנטראל.</p>
+<nav class="chips">
+  <a class="chip" href="/admin/imports" aria-current="<%= !st %>">אלע</a>
+  <% [['recognized','דערקענט'],['needs_review','דארף קאנטראל'],['corrected','פאררעכט'],['error','טעות'],['ignored','איגנארירט'],['echo','אייגענע']].forEach(function (x) { %>
+  <a class="chip" href="/admin/imports?status=<%= x[0] %>" aria-current="<%= st === x[0] %>"><%= x[1] %> <span class="count"><%= counts[x[0]] || 0 %></span></a>
+  <% }) %>
+</nav>
+<div class="table-wrap"><table class="list">
+  <thead><tr><th>#</th><th>סטאטוס</th><th>טעקסט</th><th>דערקענט</th><th>צייט</th><th></th></tr></thead>
+  <tbody>
+  <% rows.forEach(function (i) { var p = i.parse_result || {}; %>
+    <tr>
+      <td><%= i.id %></td>
+      <td><%- include('_status', { s: i.status }) %><%= i.edit_count ? ' ✎' : '' %></td>
+      <td><%= (i.raw_text || '').slice(0, 120) %><% if (i.error) { %><br><span class="small muted"><%= i.error %></span><% } %></td>
+      <td class="small"><% if (p.category) { %><%= p.category.name %><% } %><% if (p.boyName) { %> · <%= p.boyName %><% } %><% if (p.reasons && p.reasons.length) { %><br><span class="muted"><%= p.reasons.join(', ') %></span><% } %></td>
+      <td class="small"><%= new Date(i.received_at).toLocaleString('he-IL') %></td>
+      <td><a class="btn ghost sm" href="/admin/imports/<%= i.id %>">עפענען</a><% if (i.occasion_id && !i.occ_deleted) { %> <a class="btn ghost sm" href="/admin/occasions/<%= i.occasion_id %>/edit">רעקארד</a><% } %></td>
+    </tr>
+  <% }) %>
+  <% if (!rows.length) { %><tr><td colspan="6" class="muted">קיין אימפארטן.</td></tr><% } %>
+  </tbody>
+</table></div>
+<%- include('_bottom') %>

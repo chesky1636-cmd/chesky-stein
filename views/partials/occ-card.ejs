@@ -1,0 +1,18 @@
+<article class="card occ">
+  <div class="occ-top">
+    <% if (o.boy.photo) { %><img class="avatar" src="<%= o.boy.photo %>" alt="" loading="lazy" width="44" height="44"><% } else { %><span class="avatar" aria-hidden="true"><%= o.boy.name.trim().charAt(0) %></span><% } %>
+    <div>
+      <a class="occ-name" href="<%= o.boy.url %>"><%= o.boy.name %></a>
+      <div class="occ-meta"><span class="tag cat-<%= o.category.kind %>"><%= o.category.name %></span><a class="tag" href="<%= o.branch.url %>"><%= o.branch.name %></a><% if (o.date.today) { %><span class="tag gold">היינט</span><% } else if (o.date.upcoming) { %><span class="tag gold">קומט</span><% } %></div>
+    </div>
+  </div>
+  <p class="occ-text"><%= o.text %></p>
+  <% if (o.family && (o.family.fatherInLaw || o.family.residence)) { %>
+  <div class="family">
+    <% if (o.family.fatherInLaw) { %><div>שווער: <strong><%= o.family.fatherInLaw %></strong></div><% } %>
+    <% if (o.family.residence) { %><div>וואוינונג: <%= o.family.residence %></div><% } %>
+  </div>
+  <% } %>
+  <% if (o.pictures.length) { %><div class="occ-pics"><% o.pictures.slice(0, 4).forEach(function (p) { %><a href="<%= o.url %>"><img src="<%= p.thumb %>" alt="בילד פון דער שמחה" loading="lazy" width="84" height="84"></a><% }) %></div><% } %>
+  <div class="occ-meta"><span class="heb"><%= o.date.hebrew %></span><span>· <%= o.date.weekday %>, <%= o.date.greg %></span><% if (o.date.afterSunset) { %><span>· נאך שקיעה</span><% } %><a href="<%= o.url %>" class="small">פרטים</a></div>
+</article>

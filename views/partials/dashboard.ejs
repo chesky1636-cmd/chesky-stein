@@ -1,0 +1,63 @@
+<%# Shared body of the homepage and the branch pages. %>
+<% if (announcements.length) { %>
+<section class="block" aria-labelledby="ann-h">
+  <div class="block-head"><h2 id="ann-h">הויפט מודעות</h2><a class="more" href="/announcements<%= branchId ? '?branch=' + branchId : '' %>">אלע מודעות ›</a></div>
+  <div class="grid two">
+    <% announcements.forEach(function (a) { %>
+    <article class="card pad-lg">
+      <div class="occ-meta"><span class="tag gold"><%= a.branch ? a.branch.name : 'די גאנצע ישיבה' %></span><% if (a.eventDate) { %><span><%= h.hebrewFromIso(a.eventDate.iso).text %> · <%= a.eventDate.greg %></span><% } %></div>
+      <h3><a href="<%= a.url %>"><%= a.title %></a></h3>
+      <% if (a.picture) { %><a href="<%= a.url %>"><img src="<%= a.picture.thumb %>" alt="" loading="lazy" class="ann-img"></a><% } %>
+      <p class="occ-text"><%= a.body.length > 220 ? a.body.slice(0, 220) + '…' : a.body %></p>
+    </article>
+    <% }) %>
+  </div>
+</section>
+<% } %>
+
+<section class="block" aria-labelledby="today-h">
+  <div class="grid two">
+    <div>
+      <div class="block-head"><h2 id="today-h">היינט</h2><span class="muted"><%= today.hebrew.text %></span></div>
+      <% if (todays.length) { %><div class="grid two"><% todays.forEach(function (o) { %><%- include('occ-card', { o: o }) %><% }) %></div>
+      <% } else { %><div class="empty">היינט זענען נאך נישט פאראן קיין שמחות.</div><% } %>
+    </div>
+    <div>
+      <div class="block-head"><h2 id="up-h">קומענדיגע שמחות</h2></div>
+      <% if (upcoming.length) { %>
+      <ul class="cat-list card"><% upcoming.forEach(function (o) { %>
+        <li><span class="tag cat-<%= o.category.kind %>"><%= o.category.name %></span><span class="who"><a href="<%= o.url %>"><%= o.boy.name %></a></span><span class="when"><%= o.date.hebrew %></span></li>
+      <% }) %></ul>
+      <% } else { %><div class="empty">קיין קומענדיגע שמחות זענען נישט פארצייכנט.</div><% } %>
+    </div>
+  </div>
+</section>
+
+<section class="block" aria-labelledby="cats-h">
+  <div class="block-head"><h2 id="cats-h">שמחות לויט קאטעגאריע</h2></div>
+  <div class="cat-grid">
+    <% sections.forEach(function (s) { %>
+    <div class="card cat-card">
+      <h3><span class="tag cat-<%= s.category.kind %>"><%= counts[s.category.key] || 0 %></span><a href="/feed?category=<%= s.category.key %><%= branchId ? '&branch=' + branchId : '' %>"><%= s.category.name %></a></h3>
+      <% if (s.items.length) { %>
+      <ul class="cat-list"><% s.items.forEach(function (o) { %>
+        <li><% if (o.boy.photo) { %><img class="avatar" src="<%= o.boy.photo %>" alt="" loading="lazy" width="44" height="44"><% } else { %><span class="avatar" aria-hidden="true"><%= o.boy.name.trim().charAt(0) %></span><% } %>
+          <span class="who"><a href="<%= o.url %>"><%= o.boy.name %></a><br><span class="small muted"><%= o.branch.name %></span></span><span class="when"><%= o.date.hebrew %></span></li>
+      <% }) %></ul>
+      <a class="small" href="/feed?category=<%= s.category.key %><%= branchId ? '&branch=' + branchId : '' %>">אלע <%= s.category.name %> ›</a>
+      <% } else { %><div class="empty small">נאך קיין רעקארדס.</div><% } %>
+    </div>
+    <% }) %>
+  </div>
+</section>
+
+<section class="block" id="calendar" aria-labelledby="cal-h">
+  <div class="block-head"><h2 id="cal-h">אידישער קאלענדאר</h2><a class="more" href="/calendar<%= branchId ? '?branch=' + branchId : '' %>">גרויסער קאלענדאר ›</a></div>
+  <div data-cal-root><%- include('calendar', { cal: cal, day: day, branchId: branchId, base: base }) %></div>
+</section>
+
+<section class="block" aria-labelledby="feed-h">
+  <div class="block-head"><h2 id="feed-h">לעצטע שמחות</h2><a class="more" href="/feed<%= branchId ? '?branch=' + branchId : '' %>">אלע שמחות ›</a></div>
+  <% if (feed.length) { %><div class="grid"><% feed.forEach(function (o) { %><%- include('occ-card', { o: o }) %><% }) %></div>
+  <% } else { %><div class="empty">נאך קיין שמחות אין דער דאטנבאזע.</div><% } %>
+</section>

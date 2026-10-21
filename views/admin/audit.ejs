@@ -1,0 +1,7 @@
+<%- include('_top') %>
+<h1>אקטיוויטעט</h1>
+<div class="table-wrap"><table class="list">
+  <thead><tr><th>צייט</th><th>ראלע</th><th>אקציע</th><th>אביעקט</th><th>IP</th></tr></thead>
+  <tbody><% rows.forEach(function (a) { %><tr><td class="small"><%= new Date(a.at).toLocaleString('he-IL') %></td><td><%= a.role === 'super' ? 'הויפט' : a.role === 'admin' ? 'אדמין' : '' %></td><td><%= a.action %></td><td><%= a.entity || '' %> <%= a.entity_id || '' %></td><td class="small" dir="ltr"><%= a.ip || '' %></td></tr><% }) %></tbody>
+</table></div>
+<%- include('_bottom') %>

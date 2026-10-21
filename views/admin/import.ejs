@@ -1,0 +1,35 @@
+<%- include('_top') %>
+<% var p = imp.parse_result || {}; %>
+<div class="block-head"><h1>אימפארט #<%= imp.id %></h1><%- include('_status', { s: imp.status }) %></div>
+<div class="grid two">
+  <div class="card">
+    <h2>אריגינעלער טעקסט</h2>
+    <div class="raw"><%= imp.raw_text || '(קיין טעקסט – נאר בילד)' %></div>
+    <p class="small muted">טשאט: <%= imp.chat_title || '' %> (<%= imp.chat_id %>) · מעסעדזש <%= imp.message_id %> · <%= imp.message_date ? new Date(imp.message_date).toLocaleString('he-IL') : '' %><%= imp.edit_count ? ' · רעדאקטירט ' + imp.edit_count + ' מאל' : '' %></p>
+    <% if (imp.error) { %><div class="notice err"><%= imp.error %></div><% } %>
+  </div>
+  <div class="card">
+    <h2>וואס איז דערקענט געווארן</h2>
+    <table class="list">
+      <tr><th>קאטעגאריע</th><td><%= p.category ? p.category.name : '—' %></td></tr>
+      <tr><th>בחור</th><td><%= p.boyName || '—' %></td></tr>
+      <tr><th>סניף</th><td><%= p.branchId ? branches.find(function (b) { return b.id === p.branchId; }).name : '—' %></td></tr>
+      <tr><th>שווער</th><td><%= p.fatherInLaw || '—' %></td></tr>
+      <tr><th>וואוינונג</th><td><%= p.residence || '—' %></td></tr>
+      <tr><th>בילד</th><td><% if (p.mediaId) { %><img src="/admin/media/<%= p.mediaId %>/thumb.webp" alt="" width="100"><% } else { %>—<% } %></td></tr>
+    </table>
+    <% if (p.reasons && p.reasons.length) { %><div class="notice warn"><%= p.reasons.join(' · ') %></div><% } %>
+    <% if (p.notes && p.notes.length) { %><div class="notice warn"><%= p.notes.join(' · ') %></div><% } %>
+    <div class="actions">
+      <% if (occ) { %>
+        <a class="btn gold" href="/admin/occasions/<%= occ.id %>/edit">רעדאקטירן/פאררעכטן דעם רעקארד</a>
+        <a class="btn ghost" href="/occasion/<%= occ.id %>">זען עפנטלעך</a>
+      <% } else { %>
+        <a class="btn gold" href="/admin/occasions/new?import=<%= imp.id %>">שאפן א רעקארד פון דעם</a>
+        <form method="post" action="/admin/imports/<%= imp.id %>/reprocess"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn ghost" type="submit">נאכאמאל פרובירן דערקענען</button></form>
+        <% if (imp.status !== 'ignored') { %><form method="post" action="/admin/imports/<%= imp.id %>/ignore"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn ghost" type="submit">איגנארירן</button></form><% } %>
+      <% } %>
+    </div>
+  </div>
+</div>
+<%- include('_bottom') %>

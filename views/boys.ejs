@@ -1,0 +1,10 @@
+<%- include('partials/head') %>
+<div class="wrap">
+  <section class="block">
+    <div class="block-head"><h1>בחורים</h1><span class="muted"><%= boys.length %></span></div>
+    <%- include('partials/branch-chips', { base: '/boys', extra: '' }) %>
+    <% if (boys.length) { %><div class="grid"><% boys.forEach(function (b) { %><%- include('partials/boy-card', { b: b }) %><% }) %></div>
+    <% } else { %><div class="empty">נאך קיין בחורים.</div><% } %>
+  </section>
+</div>
+<%- include('partials/foot') %>

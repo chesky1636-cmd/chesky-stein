@@ -1,0 +1,41 @@
+<%- include('_top') %>
+<h1>דופליקאטן</h1>
+<section class="block">
+  <h2>בחורים מיט ענליכע נעמען</h2>
+  <p class="muted">צוזאמשטעלן פירט אריבער אלע רעקארדס און לייגט צו דעם אנדערן נאמען אלס אויסלייג. די סטאטיסטיק ווערט גלייך פאררעכט.</p>
+  <div class="table-wrap"><table class="list">
+    <thead><tr><th>בחור א</th><th>בחור ב</th><th>ענלעכקייט</th><th></th></tr></thead>
+    <tbody>
+    <% pairs.forEach(function (p) { %>
+      <tr>
+        <td><a href="/admin/boys/<%= p.a.id %>"><%= p.a.official_name %></a><br><span class="small muted"><%= branches.find(function (b) { return b.id === p.a.branch; }).name %></span></td>
+        <td><a href="/admin/boys/<%= p.b.id %>"><%= p.b.official_name %></a><br><span class="small muted"><%= branches.find(function (b) { return b.id === p.b.branch; }).name %></span></td>
+        <td><%= Math.round(p.score * 100) %>%</td>
+        <td class="actions">
+          <form method="post" action="/admin/duplicates/merge" data-confirm="צוזאמשטעלן ב אין א?"><input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="fromId" value="<%= p.b.id %>"><input type="hidden" name="toId" value="<%= p.a.id %>"><button class="btn ghost sm" type="submit">ב ← א</button></form>
+          <form method="post" action="/admin/duplicates/merge" data-confirm="צוזאמשטעלן א אין ב?"><input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="fromId" value="<%= p.a.id %>"><input type="hidden" name="toId" value="<%= p.b.id %>"><button class="btn ghost sm" type="submit">א ← ב</button></form>
+        </td>
+      </tr>
+    <% }) %>
+    <% if (!pairs.length) { %><tr><td colspan="4" class="muted">קיין מעגליכע דופליקאטן.</td></tr><% } %>
+    </tbody>
+  </table></div>
+</section>
+<section class="block">
+  <h2>דופליקאט רעקארדס</h2>
+  <p class="muted">די רעקארדס זענען פובליקירט (ווי פארלאנגט), אבער ווערן נישט צווייפאך געציילט. מען קען זיי באהאלטן.</p>
+  <div class="table-wrap"><table class="list">
+    <thead><tr><th>#</th><th>בחור</th><th>קאטעגאריע</th><th>דאטום</th><th>אריגינאל</th><th></th></tr></thead>
+    <tbody>
+    <% dupOccasions.forEach(function (o) { %>
+      <tr><td><a href="/admin/occasions/<%= o.id %>/edit"><%= o.id %></a></td><td><%= o.boy_name %></td><td><%= o.cat_name %></td><td><%= o.heb_date_text %></td><td><a href="/admin/occasions/<%= o.duplicate_of %>/edit">#<%= o.duplicate_of %></a></td>
+        <td class="actions">
+          <% if (o.status === 'published') { %><form method="post" action="/admin/duplicates/occasion/<%= o.id %>/hide"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn ghost sm" type="submit">באהאלטן</button></form><% } else { %><%- include('_status', { s: o.status }) %><% } %>
+          <form method="post" action="/admin/duplicates/occasion/<%= o.id %>/not-duplicate"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn ghost sm" type="submit">נישט קיין דופליקאט</button></form>
+        </td></tr>
+    <% }) %>
+    <% if (!dupOccasions.length) { %><tr><td colspan="6" class="muted">קיין דופליקאט רעקארדס.</td></tr><% } %>
+    </tbody>
+  </table></div>
+</section>
+<%- include('_bottom') %>

@@ -1,0 +1,42 @@
+{
+  "name": "yiddish-school-db",
+  "version": "1.0.0",
+  "description": "Yiddish school occasions database (RTL), four fixed branches, Jewish calendar, Telegram integration",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "migrate": "node src/migrate.js",
+    "backup": "node scripts/backup.js",
+    "restore": "node scripts/restore.js",
+    "test": "node --test --test-concurrency=1 test/*.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chesky1636-cmd/chesky-stein.git"
+  },
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/chesky1636-cmd/chesky-stein/issues"
+  },
+  "homepage": "https://github.com/chesky1636-cmd/chesky-stein#readme",
+  "dependencies": {
+    "@hebcal/core": "^6.14.6",
+    "compression": "^1.8.2",
+    "cookie-parser": "^1.4.7",
+    "ejs": "^7.0.2",
+    "express": "^4.22.3",
+    "express-rate-limit": "^8.7.1",
+    "helmet": "^8.3.0",
+    "multer": "^2.4.0",
+    "pg": "^8.23.1",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "playwright": "^1.64.1"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "private": true
+}

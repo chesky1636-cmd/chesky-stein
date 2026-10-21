@@ -1,0 +1,14 @@
+<%- include('partials/head') %>
+<div class="wrap">
+  <section class="block">
+    <div class="small muted"><a href="/">היים</a> › <a href="/announcements">מודעות</a></div>
+    <article class="card pad-lg">
+      <div class="occ-meta"><span class="tag gold"><%= a.branch ? a.branch.name : 'די גאנצע ישיבה' %></span><% if (a.eventDate) { %><span><%= h.hebrewFromIso(a.eventDate.iso).text %> · <%= a.eventDate.greg %></span><% } %></div>
+      <h1><%= a.title %></h1>
+      <% if (a.picture) { %><img src="<%= a.picture.url %>" alt="" class="ann-img"><% } %>
+      <div class="pre-line"><%= a.body %></div>
+      <% if (admin) { %><div class="actions"><a class="btn ghost" href="/admin/announcements/<%= a.id %>/edit">רעדאקטירן</a></div><% } %>
+    </article>
+  </section>
+</div>
+<%- include('partials/foot') %>

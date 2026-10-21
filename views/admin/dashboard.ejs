@@ -1,0 +1,47 @@
+<%- include('_top') %>
+<h1>איבערבליק</h1>
+<div class="stats">
+  <div class="stat total"><div class="lbl">שידוכים (יחידים)</div><div class="num"><%= stats.total %></div><div class="sub">דאס יאר: <%= stats.thisYear %></div></div>
+  <a class="stat" href="/admin/occasions"><div class="lbl">רעקארדס</div><div class="num"><%= counts.occasions %></div></a>
+  <a class="stat" href="/admin/boys"><div class="lbl">בחורים</div><div class="num"><%= counts.boys %></div></a>
+  <a class="stat" href="/admin/occasions?review=1"><div class="lbl">דארפן קאנטראל</div><div class="num"><%= counts.review %></div></a>
+  <a class="stat" href="/admin/imports?status=needs_review"><div class="lbl">אימפארטן אפן</div><div class="num"><%= counts.imports_open %></div><div class="sub muted">די וואך: <%= counts.imports_week %></div></a>
+</div>
+
+<section class="block card">
+  <h2>טעלעגראם</h2>
+  <% if (!tgStatus.configured) { %>
+    <div class="notice warn">טעלעגראם איז נישט קאנפיגורירט. דער הויפט-אדמיניסטראטאר דארף איינשטעלן TELEGRAM_BOT_TOKEN אין ראילוועי.</div>
+  <% } else { %>
+    <div class="occ-meta">
+      <span>מאָדוס: <strong><%= { webhook: 'וועבהוק', polling: 'פאלינג', off: 'אויסגעשאלטן' }[tgStatus.mode] || tgStatus.mode %></strong></span>
+      <% if (tgStatus.botUsername) { %><span>· באט: @<%= tgStatus.botUsername %></span><% } %>
+      <span>· מקורות: <%= tgStatus.sources.length ? tgStatus.sources.join(', ') : 'קיינע' %></span>
+      <% if (tgStatus.lastUpdateAt) { %><span>· לעצטע אריינקומענדיגע: <%= new Date(tgStatus.lastUpdateAt).toLocaleString('he-IL') %></span><% } %>
+    </div>
+    <% if (tgStatus.lastError) { %><div class="notice err">לעצטע טעות: <%= tgStatus.lastError %></div><% } %>
+  <% } %>
+  <div class="occ-meta"><span>ארויסגייענדיג: ווארט <%= counts.outbox_pending %></span><span>· דורכגעפאלן <%= counts.outbox_failed %></span><a href="/admin/telegram">פרטים ›</a></div>
+</section>
+
+<section class="block">
+  <div class="block-head"><h2>לעצטע אימפארטן</h2><a class="more" href="/admin/imports">אלע ›</a></div>
+  <div class="table-wrap"><table class="list">
+    <thead><tr><th>#</th><th>סטאטוס</th><th>טעקסט</th><th>צייט</th></tr></thead>
+    <tbody>
+    <% recentImports.forEach(function (i) { %>
+      <tr><td><a href="/admin/imports/<%= i.id %>"><%= i.id %></a></td><td><%- include('_status', { s: i.status }) %></td><td><%= (i.raw_text || '').slice(0, 90) %></td><td class="small"><%= new Date(i.received_at).toLocaleString('he-IL') %></td></tr>
+    <% }) %>
+    <% if (!recentImports.length) { %><tr><td colspan="4" class="muted">נאך קיין אימפארטן.</td></tr><% } %>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="block">
+  <h2>לעצטע אקטיוויטעט</h2>
+  <div class="table-wrap"><table class="list">
+    <thead><tr><th>צייט</th><th>ראלע</th><th>אקציע</th><th>אביעקט</th></tr></thead>
+    <tbody><% recentAudit.forEach(function (a) { %><tr><td class="small"><%= new Date(a.at).toLocaleString('he-IL') %></td><td><%= a.role || '' %></td><td><%= a.action %></td><td><%= a.entity || '' %> <%= a.entity_id || '' %></td></tr><% }) %></tbody>
+  </table></div>
+</section>
+<%- include('_bottom') %>

@@ -1,0 +1,9 @@
+<%- include('partials/head') %>
+<div class="wrap">
+  <section class="block" id="calendar">
+    <div class="block-head"><h1>אידישער קאלענדאר</h1><span class="muted">היינט: <%= today.hebrew.text %> · <%= today.greg %></span></div>
+    <%- include('partials/branch-chips', { base: '/calendar', extra: 'y=' + cal.year + '&m=' + cal.month }) %>
+    <div data-cal-root><%- include('partials/calendar', { cal: cal, day: day, branchId: branchId, base: '/calendar' }) %></div>
+  </section>
+</div>
+<%- include('partials/foot') %>

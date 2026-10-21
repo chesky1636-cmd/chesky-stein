@@ -1,0 +1,21 @@
+<%- include('_top') %>
+<h1>נייער בחור</h1>
+<% if (suggestions && suggestions.length) { %>
+<div class="notice warn">
+  <p>עקזיסטירנדע בחורים מיט ענליכע נעמען:</p>
+  <ul><% suggestions.forEach(function (s) { %><li><a href="/admin/boys/<%= s.id %>"><%= s.official_name %></a> · <%= (branches.find(function (b) { return b.id === s.branch; }) || {}).name %></li><% }) %></ul>
+  <p>אויב דאס איז איינער פון זיי, גייט צו זיין פראפיל און לייגט צו דעם נייעם אויסלייג אלס "אנדער נאמען".</p>
+</div>
+<% } %>
+<form class="card" method="post" action="/admin/boys" enctype="multipart/form-data">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <div class="row">
+    <div class="field"><label for="n-name">אפיציעלער נאמען</label><input id="n-name" name="name" required maxlength="120" value="<%= v.name || '' %>"></div>
+    <div class="field"><label for="n-branch">סניף</label><select id="n-branch" name="branch" required><option value="">-- קלייבט --</option><% branches.forEach(function (b) { %><option value="<%= b.id %>" <%= v.branch === b.id ? 'selected' : '' %>><%= b.name %></option><% }) %></select></div>
+  </div>
+  <div class="field"><label for="n-al">אנדערע נעמען / אויסלייגן (אפגעטיילט מיט קאמע)</label><input id="n-al" name="aliases" value="<%= v.aliases || '' %>"></div>
+  <div class="field"><label for="n-photo">בילד</label><input id="n-photo" type="file" name="photo" accept="image/*"></div>
+  <% if (suggestions && suggestions.length) { %><label class="check"><input type="checkbox" name="confirmNewBoy" value="1"> יא, דאס איז א נייער בחור</label><% } %>
+  <button class="btn gold" type="submit">צולייגן</button>
+</form>
+<%- include('_bottom') %>

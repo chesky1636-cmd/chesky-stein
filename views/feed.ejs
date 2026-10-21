@@ -1,0 +1,26 @@
+<%- include('partials/head') %>
+<%
+  var qs = function (extra) { var p = []; if (branchId) p.push('branch=' + branchId); if (category) p.push('category=' + category.key); if (from) p.push('from=' + from); if (to) p.push('to=' + to); if (extra) p.push(extra); return p.length ? '?' + p.join('&') : ''; };
+%>
+<div class="wrap">
+  <section class="block">
+    <div class="block-head"><h1><%= category ? category.name : 'אלע שמחות' %></h1><span class="muted"><%= total %> רעקארדס</span></div>
+    <form class="card" method="get" action="/feed">
+      <div class="row">
+        <div class="field"><label for="f-branch">סניף</label><select id="f-branch" name="branch"><option value="">אלע סניפים</option><% branches.forEach(function (b) { %><option value="<%= b.id %>" <%= branchId === b.id ? 'selected' : '' %>><%= b.name %></option><% }) %></select></div>
+        <div class="field"><label for="f-cat">קאטעגאריע</label><select id="f-cat" name="category"><option value="">אלע</option><% categories.forEach(function (c) { %><option value="<%= c.key %>" <%= category && category.key === c.key ? 'selected' : '' %>><%= c.name %></option><% }) %></select></div>
+        <div class="field"><label for="f-from">פון דאטום</label><input id="f-from" type="date" name="from" value="<%= from || '' %>"></div>
+        <div class="field"><label for="f-to">ביז דאטום</label><input id="f-to" type="date" name="to" value="<%= to || '' %>"></div>
+      </div>
+      <div class="actions"><button class="btn" type="submit">פילטערן</button><a class="btn ghost" href="/feed">אויסקלארן</a></div>
+    </form>
+    <nav class="chips" aria-label="קאטעגאריעס">
+      <a class="chip" href="/feed<%= branchId ? '?branch=' + branchId : '' %>" aria-current="<%= !category %>">אלע</a>
+      <% categories.forEach(function (c) { %><a class="chip" href="/feed?category=<%= c.key %><%= branchId ? '&branch=' + branchId : '' %>" aria-current="<%= !!(category && category.key === c.key) %>"><%= c.name %></a><% }) %>
+    </nav>
+    <% if (items.length) { %><div class="grid"><% items.forEach(function (o) { %><%- include('partials/occ-card', { o: o }) %><% }) %></div>
+    <% } else { %><div class="empty">קיין רעקארדס נישט געפונען.</div><% } %>
+    <%- include('partials/pager', { pageUrl: function (p) { return '/feed' + qs('page=' + p); } }) %>
+  </section>
+</div>
+<%- include('partials/foot') %>

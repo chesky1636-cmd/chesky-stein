@@ -1,0 +1,19 @@
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <img src="/logo" alt="" width="36" height="42">
+    <div>
+      <strong><%= settings.school_name %></strong><br>
+      <span><%= settings.school_tagline %></span>
+    </div>
+    <div class="small">
+      <% branches.forEach(function (b, i) { %><a href="/branch/<%= b.id %>"><%= b.name %></a><%= i < branches.length - 1 ? ' · ' : '' %><% }) %>
+    </div>
+    <div class="small">
+      <% if (!admin) { %><a href="/admin/login">פארוואלטונג</a><% } %>
+    </div>
+  </div>
+</footer>
+<script src="/static/js/app.js" defer></script>
+</body>
+</html>

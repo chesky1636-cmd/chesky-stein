@@ -1,0 +1,7 @@
+<% if (pages > 1) { %>
+<nav class="pager" aria-label="זייטן">
+  <% if (page > 1) { %><a class="btn ghost sm" href="<%= pageUrl(page - 1) %>">‹ פריער</a><% } %>
+  <span class="chip" aria-current="true">בלאט <%= page %> פון <%= pages %></span>
+  <% if (page < pages) { %><a class="btn ghost sm" href="<%= pageUrl(page + 1) %>">ווייטער ›</a><% } %>
+</nav>
+<% } %>

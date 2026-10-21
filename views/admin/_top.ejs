@@ -1,0 +1,6 @@
+<%- include('../partials/head') %>
+<div class="wrap admin-layout">
+<%- include('_side') %>
+<div>
+<% if (locals.ok) { %><div class="notice ok" role="status"><%= ok %></div><% } %>
+<% if (locals.error) { %><div class="notice err" role="alert"><%= error %></div><% } %>

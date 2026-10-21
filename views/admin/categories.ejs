@@ -1,0 +1,39 @@
+<%- include('_top') %>
+<h1>קאטעגאריעס</h1>
+<p class="muted">דער סדר דא איז דער סדר אויפן וועבזייטל. "שליסלווערטער" ווערן גענוצט צו דערקענען טעלעגראם מודעות. די פריוואטקייט-כללים פון די זעקס ערשטע קאטעגאריעס קען מען נישט טוישן.</p>
+<% var kinds = { shidduch: 'שידוך', tenaim: 'תנאים', wedding: 'חתונה', birth_boy: 'בן זכר (פריוואט)', upsheren: 'אפשערן (פריוואט)', other: 'אנדערע' }; %>
+<% cats.forEach(function (c, i) { var sys = ['shidduch','tenaim','wedding','birth','upsheren','other'].indexOf(c.key) >= 0; %>
+<div class="card block">
+  <form method="post" action="/admin/categories/<%= c.id %>">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <div class="row">
+      <div class="field"><label for="c-n-<%= c.id %>">נאמען</label><input id="c-n-<%= c.id %>" name="name" required maxlength="60" value="<%= c.name %>"></div>
+      <div class="field"><label for="c-k-<%= c.id %>">סארט</label>
+        <% if (sys) { %><input id="c-k-<%= c.id %>" value="<%= kinds[c.kind] %>" disabled><input type="hidden" name="kind" value="<%= c.kind %>">
+        <% } else { %><select id="c-k-<%= c.id %>" name="kind"><% Object.keys(kinds).forEach(function (k) { %><option value="<%= k %>" <%= c.kind === k ? 'selected' : '' %>><%= kinds[k] %></option><% }) %></select><% } %></div>
+    </div>
+    <div class="field"><label for="c-w-<%= c.id %>">שליסלווערטער (קאמע)</label><input id="c-w-<%= c.id %>" name="keywords" value="<%= (c.keywords || []).join(', ') %>"></div>
+    <div class="actions">
+      <label class="check"><input type="checkbox" name="enabled" value="1" <%= c.enabled ? 'checked' : '' %>> אקטיוו</label>
+      <label class="check"><input type="checkbox" name="countsForShidduch" value="1" <%= c.counts_for_shidduch ? 'checked' : '' %>> ציילט פאר שידוכים סטאטיסטיק</label>
+      <button class="btn sm" type="submit">אפהיטן</button>
+    </div>
+  </form>
+  <div class="actions">
+    <% if (i > 0) { %><form method="post" action="/admin/categories/<%= c.id %>/move"><input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="dir" value="up"><button class="btn ghost sm" type="submit">↑ ארויף</button></form><% } %>
+    <% if (i < cats.length - 1) { %><form method="post" action="/admin/categories/<%= c.id %>/move"><input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="dir" value="down"><button class="btn ghost sm" type="submit">↓ אראפ</button></form><% } %>
+  </div>
+</div>
+<% }) %>
+<form class="card block" method="post" action="/admin/categories">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <h2>נייע קאטעגאריע</h2>
+  <div class="row">
+    <div class="field"><label for="nc-n">נאמען</label><input id="nc-n" name="name" required maxlength="60"></div>
+    <div class="field"><label for="nc-k">סארט</label><select id="nc-k" name="kind"><% Object.keys(kinds).forEach(function (k) { %><option value="<%= k %>" <%= k === 'other' ? 'selected' : '' %>><%= kinds[k] %></option><% }) %></select></div>
+  </div>
+  <div class="field"><label for="nc-w">שליסלווערטער (קאמע)</label><input id="nc-w" name="keywords"></div>
+  <label class="check"><input type="checkbox" name="countsForShidduch" value="1"> ציילט פאר שידוכים סטאטיסטיק</label>
+  <button class="btn gold" type="submit">צולייגן</button>
+</form>
+<%- include('_bottom') %>

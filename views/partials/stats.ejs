@@ -1,0 +1,15 @@
+<div class="stats">
+  <div class="stat total">
+    <div class="lbl">שידוכים אין דער גאנצער ישיבה</div>
+    <div class="num"><%= stats.total %></div>
+    <div class="sub">דאס יאר (<%= h.yearText(stats.hebYear) %>): <%= stats.thisYear %></div>
+  </div>
+  <% branches.forEach(function (b) { %>
+  <a class="stat" href="/branch/<%= b.id %>">
+    <div class="lbl"><%= b.name %></div>
+    <div class="num"><%= stats.byBranch[b.id].total %></div>
+    <div class="sub muted">דאס יאר: <%= stats.byBranch[b.id].thisYear %></div>
+  </a>
+  <% }) %>
+</div>
+<p class="small muted">יעדער בחור ווערט געציילט נאר איין מאל, אפילו ווען עס זענען פאראן עטלעכע מודעות אדער דופליקאטן.</p>

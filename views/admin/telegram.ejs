@@ -1,0 +1,42 @@
+<%- include('_top') %>
+<h1>טעלעגראם</h1>
+<% if (locals.err) { %><div class="notice err" role="alert"><%= err %></div><% } %>
+<div class="card block">
+  <h2>סטאטוס</h2>
+  <table class="list">
+    <tr><th>קאנפיגורירט</th><td><%= st.configured ? 'יא' : 'ניין – TELEGRAM_BOT_TOKEN פעלט אין ראילוועי' %></td></tr>
+    <tr><th>מאָדוס</th><td><%= { webhook: 'וועבהוק', polling: 'פאלינג', off: 'אויסגעשאלטן' }[st.mode] || st.mode %></td></tr>
+    <tr><th>באט</th><td><%= st.botUsername ? '@' + st.botUsername : '—' %></td></tr>
+    <tr><th>ערלויבטע מקורות (טשאט IDs)</th><td><%= st.sources.length ? st.sources.join(', ') : 'קיינע – אריינקומענדיגע פאסטן ווערן איגנארירט' %></td></tr>
+    <tr><th>ארויסגייענדיגער קאנאל</th><td><%= st.outgoing || '—' %></td></tr>
+    <tr><th>וועבהוק</th><td><%= st.webhookUrl || '—' %></td></tr>
+    <tr><th>לעצטע אריינקומענדיגע</th><td><%= st.lastUpdateAt ? new Date(st.lastUpdateAt).toLocaleString('he-IL') : '—' %><%= st.lastChatId ? ' · טשאט ' + st.lastChatId + ' ' + (st.lastChatTitle || '') : '' %></td></tr>
+    <tr><th>לעצטע טעות</th><td><%= st.lastError || '—' %></td></tr>
+  </table>
+  <% if (admin.isSuper && st.configured) { %>
+  <div class="actions block">
+    <form method="post" action="/admin/telegram/check"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn" type="submit">טעסטן פארבינדונג</button></form>
+    <% if (st.mode === 'webhook') { %><form method="post" action="/admin/telegram/webhook"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn ghost" type="submit">רעגיסטרירן וועבהוק נאכאמאל</button></form><% } %>
+  </div>
+  <% } %>
+</div>
+
+<h2>ארויסגעשיקטע מודעות</h2>
+<div class="table-wrap"><table class="list">
+  <thead><tr><th>#</th><th>וואס</th><th>סטאטוס</th><th>פרואוון</th><th>טעות</th><th>צייט</th><th></th></tr></thead>
+  <tbody>
+  <% outbox.forEach(function (o) { %>
+  <tr>
+    <td><%= o.id %></td>
+    <td><a href="/admin/<%= o.kind === 'announcement' ? 'announcements' : 'occasions' %>/<%= o.ref_id %>/edit"><%= o.kind === 'announcement' ? 'מודעה' : 'רעקארד' %> #<%= o.ref_id %></a></td>
+    <td><%- include('_status', { s: o.status }) %></td>
+    <td><%= o.attempts %></td>
+    <td class="small"><%= o.error || '' %></td>
+    <td class="small"><%= new Date(o.sent_at || o.created_at).toLocaleString('he-IL') %></td>
+    <td><% if (o.status === 'failed') { %><form method="post" action="/admin/outbox/<%= o.id %>/retry"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn ghost sm" type="submit">ווידער פרובירן</button></form><% } %></td>
+  </tr>
+  <% }) %>
+  <% if (!outbox.length) { %><tr><td colspan="7" class="muted">נאך גארנישט געשיקט.</td></tr><% } %>
+  </tbody>
+</table></div>
+<%- include('_bottom') %>

@@ -1,0 +1,36 @@
+<%- include('partials/head') %>
+<%
+  var qs = function (extra) { var p = ['q=' + encodeURIComponent(q)]; if (branchId) p.push('branch=' + branchId); if (category) p.push('category=' + category.key); if (from) p.push('from=' + from); if (to) p.push('to=' + to); if (extra) p.push(extra); return '?' + p.join('&'); };
+%>
+<div class="wrap">
+  <section class="block">
+    <h1>זוכן</h1>
+    <form class="card" method="get" action="/search" role="search">
+      <div class="field search-form" data-suggest>
+        <label class="sr-only" for="q">זוכן</label>
+        <input type="search" id="q" name="q" value="<%= q %>" placeholder="נאמען, אנדערע אויסלייג, שמחה, סניף, דאטום (למשל כ״ה תשרי אדער 20/10/2026)…" autocomplete="off">
+        <button class="btn gold" type="submit">זוכן</button>
+        <div class="suggest hidden" role="listbox"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="s-branch">סניף</label><select id="s-branch" name="branch"><option value="">אלע סניפים</option><% branches.forEach(function (b) { %><option value="<%= b.id %>" <%= branchId === b.id ? 'selected' : '' %>><%= b.name %></option><% }) %></select></div>
+        <div class="field"><label for="s-cat">קאטעגאריע</label><select id="s-cat" name="category"><option value="">אלע</option><% categories.forEach(function (c) { %><option value="<%= c.key %>" <%= category && category.key === c.key ? 'selected' : '' %>><%= c.name %></option><% }) %></select></div>
+        <div class="field"><label for="s-from">פון דאטום</label><input id="s-from" type="date" name="from" value="<%= from || '' %>"></div>
+        <div class="field"><label for="s-to">ביז דאטום</label><input id="s-to" type="date" name="to" value="<%= to || '' %>"></div>
+      </div>
+    </form>
+    <% if (searched) { %>
+      <% if (boys.length) { %>
+      <div class="block-head"><h2>בחורים</h2><span class="muted"><%= boys.length %></span></div>
+      <div class="grid"><% boys.forEach(function (b) { %><%- include('partials/boy-card', { b: b }) %><% }) %></div>
+      <% } %>
+      <div class="block-head"><h2>שמחות</h2><span class="muted"><%= total %></span></div>
+      <% if (occasions.length) { %><div class="grid"><% occasions.forEach(function (o) { %><%- include('partials/occ-card', { o: o }) %><% }) %></div>
+      <% } else if (!boys.length) { %><div class="empty">קיין רעזולטאטן נישט געפונען. פרובירט אן אנדער אויסלייג אדער ווייניגער ווערטער.</div><% } else { %><div class="empty">קיין שמחות פאסן נישט.</div><% } %>
+      <%- include('partials/pager', { pageUrl: function (p) { return '/search' + qs('page=' + p); } }) %>
+    <% } else { %>
+      <div class="empty">שרייבט א נאמען, א שמחה, א סניף אדער א דאטום. מען קען זוכן מיט אנדערע אויסלייגן (למשל פרידמאן / פריעדמאן).</div>
+    <% } %>
+  </section>
+</div>
+<%- include('partials/foot') %>

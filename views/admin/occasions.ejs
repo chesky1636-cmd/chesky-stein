@@ -1,0 +1,37 @@
+<%- include('_top') %>
+<div class="block-head"><h1>רעקארדס</h1><a class="more btn gold sm" href="/admin/occasions/new">+ נייער רעקארד</a></div>
+<form class="card" method="get" action="/admin/occasions">
+  <div class="row">
+    <div class="field"><label for="a-q">זוכן</label><input id="a-q" type="search" name="q" value="<%= f.q %>"></div>
+    <div class="field"><label for="a-b">סניף</label><select id="a-b" name="branch"><option value="">אלע</option><% branches.forEach(function (b) { %><option value="<%= b.id %>" <%= f.branch === b.id ? 'selected' : '' %>><%= b.name %></option><% }) %></select></div>
+    <div class="field"><label for="a-c">קאטעגאריע</label><select id="a-c" name="category"><option value="">אלע</option><% allCats.forEach(function (c) { %><option value="<%= c.id %>" <%= f.categoryId === c.id ? 'selected' : '' %>><%= c.name %><%= c.enabled ? '' : ' (אויסגעשאלטן)' %></option><% }) %></select></div>
+    <div class="field"><label for="a-s">מקור</label><select id="a-s" name="source"><option value="">אלע</option><option value="manual" <%= f.source === 'manual' ? 'selected' : '' %>>מאנועל</option><option value="telegram" <%= f.source === 'telegram' ? 'selected' : '' %>>טעלעגראם</option></select></div>
+  </div>
+  <div class="actions">
+    <label class="check"><input type="checkbox" name="review" value="1" <%= f.review ? 'checked' : '' %>> נאר וואס דארפן קאנטראל</label>
+    <label class="check"><input type="checkbox" name="dups" value="1" <%= f.duplicates ? 'checked' : '' %>> נאר דופליקאטן</label>
+    <label class="check"><input type="checkbox" name="deleted" value="1" <%= f.deleted ? 'checked' : '' %>> אויסגעמעקטע</label>
+    <button class="btn sm" type="submit">פילטערן</button>
+  </div>
+</form>
+<div class="table-wrap block"><table class="list">
+  <thead><tr><th>#</th><th>בחור</th><th>קאטעגאריע</th><th>סניף</th><th>דאטום</th><th>מקור</th><th>סטאטוס</th><th></th></tr></thead>
+  <tbody>
+  <% rows.forEach(function (o) { %>
+    <tr>
+      <td><%= o.id %></td>
+      <td><a href="/admin/boys/<%= o.boy_id %>"><%= o.boy_name %></a></td>
+      <td><span class="tag cat-<%= o.cat_kind %>"><%= o.cat_name %></span></td>
+      <td><%= branches.find(function (b) { return b.id === o.branch; }).name %></td>
+      <td><%= o.heb_date_text %><br><span class="small muted"><%= o.greg_date %></span></td>
+      <td><%= o.source === 'telegram' ? 'טעלעגראם' : 'מאנועל' %></td>
+      <td><%- include('_status', { s: o.status }) %><% if (o.needs_review) { %> <span class="tag warn">קאנטראל</span><% } %><% if (o.duplicate_of) { %> <span class="tag">דופליקאט פון #<%= o.duplicate_of %></span><% } %></td>
+      <td><a class="btn ghost sm" href="/admin/occasions/<%= o.id %>/edit">רעדאקטירן</a></td>
+    </tr>
+  <% }) %>
+  <% if (!rows.length) { %><tr><td colspan="8" class="muted">קיין רעקארדס.</td></tr><% } %>
+  </tbody>
+</table></div>
+<% var qs = function (p) { var o = []; ['q','branch','source'].forEach(function (k) { if (f[k]) o.push(k + '=' + encodeURIComponent(f[k])); }); if (f.categoryId) o.push('category=' + f.categoryId); if (f.review) o.push('review=1'); if (f.duplicates) o.push('dups=1'); if (f.deleted) o.push('deleted=1'); o.push('page=' + p); return '?' + o.join('&'); }; %>
+<nav class="pager"><% if (page > 1) { %><a class="btn ghost sm" href="<%= qs(page - 1) %>">‹ פריער</a><% } %><% if (rows.length === 50) { %><a class="btn ghost sm" href="<%= qs(page + 1) %>">ווייטער ›</a><% } %></nav>
+<%- include('_bottom') %>

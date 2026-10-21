@@ -1,0 +1,18 @@
+<%- include('partials/head') %>
+<div class="wrap">
+  <section class="block">
+    <div class="block-head"><h1>מודעות</h1></div>
+    <%- include('partials/branch-chips', { base: '/announcements', extra: '' }) %>
+    <% if (items.length) { %>
+    <div class="grid two"><% items.forEach(function (a) { %>
+      <article class="card pad-lg">
+        <div class="occ-meta"><span class="tag gold"><%= a.branch ? a.branch.name : 'די גאנצע ישיבה' %></span><% if (a.eventDate) { %><span><%= h.hebrewFromIso(a.eventDate.iso).text %> · <%= a.eventDate.greg %></span><% } %></div>
+        <h2><a href="<%= a.url %>"><%= a.title %></a></h2>
+        <% if (a.picture) { %><img src="<%= a.picture.thumb %>" alt="" loading="lazy" class="ann-img"><% } %>
+        <p class="occ-text"><%= a.body.length > 300 ? a.body.slice(0, 300) + '…' : a.body %></p>
+      </article>
+    <% }) %></div>
+    <% } else { %><div class="empty">קיין מודעות.</div><% } %>
+  </section>
+</div>
+<%- include('partials/foot') %>

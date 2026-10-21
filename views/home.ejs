@@ -1,0 +1,49 @@
+<%- include('partials/head') %>
+<div class="wrap">
+  <section class="hero">
+    <div class="hero-grid">
+      <div class="hero-card main">
+        <h1><%= settings.school_name %></h1>
+        <p class="muted"><%= settings.school_tagline %></p>
+        <div class="ornament">✦</div>
+        <form class="search-form" method="get" action="/search" role="search" data-suggest>
+          <label class="sr-only" for="q">זוכן</label>
+          <input type="search" id="q" name="q" placeholder="זוכט א נאמען, שמחה, סניף אדער דאטום…" autocomplete="off" aria-autocomplete="list" aria-controls="q-suggest">
+          <button class="btn gold" type="submit">זוכן</button>
+          <div class="suggest hidden" id="q-suggest" role="listbox"></div>
+        </form>
+      </div>
+      <div class="hero-card">
+        <div class="small muted"><%= today.weekday %><%= today.afterSunset ? ' · נאך שקיעה' : '' %></div>
+        <div class="today-date"><%= today.hebrew.text %></div>
+        <div class="today-greg"><%= today.greg %></div>
+        <div class="ornament">✦</div>
+        <div class="actions"><a class="btn ghost sm" href="#calendar">קאלענדאר</a><a class="btn ghost sm" href="/feed">אלע שמחות</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="stats-h">
+    <div class="block-head"><h2 id="stats-h">שידוכים סטאטיסטיק</h2></div>
+    <%- include('partials/stats') %>
+  </section>
+
+  <section class="block" aria-labelledby="branches-h">
+    <div class="block-head"><h2 id="branches-h">די פיר סניפים</h2></div>
+    <div class="grid">
+      <% branches.forEach(function (b) { %>
+      <a class="card branch-card" href="/branch/<%= b.id %>">
+        <h3><%= b.name %></h3>
+        <% if (b.description) { %><span class="small muted"><%= b.description %></span><% } %>
+        <span><span class="num"><%= stats.byBranch[b.id].total %></span> <span class="muted">שידוכים</span></span>
+        <span class="small">צום סניף בלאט ›</span>
+      </a>
+      <% }) %>
+    </div>
+    <%- include('partials/branch-chips', { base: '/', extra: '' }) %>
+    <% if (branchId) { %><div class="notice warn">איר זעט יעצט נאר שמחות פון <strong><%= branches.find(function (x) { return x.id === branchId; }).name %></strong>. <a href="/">ווייזן אלע</a></div><% } %>
+  </section>
+
+  <%- include('partials/dashboard', { base: '/' }) %>
+</div>
+<%- include('partials/foot') %>

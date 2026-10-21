@@ -1,0 +1,20 @@
+<%- include('../partials/head') %>
+<div class="wrap">
+  <section class="block card pad-lg">
+    <h1>אריינגיין אין פארוואלטונג</h1>
+    <% if (error) { %><div class="notice err" role="alert"><%= error %></div><% } %>
+    <% if (!configured.admin && !configured.super) { %>
+      <div class="notice warn">קיין פין-קאד איז נאך נישט באשטימט. שטעלט איין ADMIN_PIN און SUPER_ADMIN_PIN אין די סערווער איינשטעלונגען (ראילוועי) און ריסטארט.</div>
+    <% } %>
+    <form method="post" action="/admin/login" autocomplete="off">
+      <input type="hidden" name="next" value="<%= next %>">
+      <div class="field">
+        <label for="pin">פין-קאד</label>
+        <input id="pin" name="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="12" required autofocus>
+        <div class="hint">אדמיניסטראטאר און הויפט-אדמיניסטראטאר האבן יעדער א באזונדערן פין-קאד.</div>
+      </div>
+      <button class="btn gold" type="submit">אריינגיין</button>
+    </form>
+  </section>
+</div>
+<%- include('../partials/foot') %>

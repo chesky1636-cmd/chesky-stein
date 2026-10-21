@@ -1,0 +1,134 @@
+<%- include('_top') %>
+<div class="block-head"><h1><%= title %></h1><% if (v.id) { %><a class="more" href="/occasion/<%= v.id %>">זען אויפן וועבזייטל ›</a><% } %></div>
+<% if (v.deletedAt) { %>
+  <div class="notice warn">דער רעקארד איז אויסגעמעקט. <form class="inline" method="post" action="/admin/occasions/<%= v.id %>/restore"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn sm" type="submit">צוריקשטעלן</button></form></div>
+<% } %>
+<% if (v.needsReview && v.reviewNote) { %><div class="notice warn">צו קאנטראלירן: <%= v.reviewNote %></div><% } %>
+<% if (v.duplicateOf) { %><div class="notice warn">דאס זעט אויס ווי א דופליקאט פון <a href="/admin/occasions/<%= v.duplicateOf %>/edit">רעקארד #<%= v.duplicateOf %></a>. ער ווערט געוויזן, אבער ווערט נישט צווייפאך געציילט אין דער סטאטיסטיק.</div><% } %>
+<% if (imp) { %>
+<details class="card block" <%= v.id ? '' : 'open' %>>
+  <summary><strong>אריגינעלער טעלעגראם טעקסט</strong> (אימפארט #<%= imp.id %>) – נאר פאר אדמיניסטראטארן</summary>
+  <div class="raw"><%= imp.raw_text || '(קיין טעקסט)' %></div>
+</details>
+<% } %>
+
+<form method="post" action="<%= v.id ? '/admin/occasions/' + v.id : '/admin/occasions' %>" enctype="multipart/form-data">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <% if (v.importId) { %><input type="hidden" name="importId" value="<%= v.importId %>"><% } %>
+
+  <fieldset>
+    <legend>בחור</legend>
+    <div data-boy-picker>
+      <input type="hidden" name="boyId" value="<%= v.boyId || '' %>">
+      <input type="hidden" name="boyName" value="<%= v.boyName || '' %>">
+      <div class="chosen <%= v.boyId ? '' : 'hidden' %>" data-picker-chosen><% if (v.boyId) { %><span>נאכגעקליבן: <strong><%= v.boyName %></strong></span> <button type="button" class="btn ghost sm" data-clear>טוישן</button><% } %></div>
+      <div class="field">
+        <label for="picker">זוכן אן עקזיסטירנדן בחור (אויך מיט אנדערע אויסלייגן)</label>
+        <input id="picker" type="search" data-picker-input autocomplete="off" placeholder="שרייבט א נאמען…">
+        <div class="picker-results" data-picker-results></div>
+      </div>
+    </div>
+    <% if (suggestions && suggestions.length) { %>
+      <div class="notice warn">
+        <p>עקזיסטירנדע בחורים מיט ענליכע נעמען – קלייבט איינעם:</p>
+        <% suggestions.forEach(function (s) { %>
+          <label class="check"><input type="radio" name="boyId" value="<%= s.id %>"> <%= s.official_name %> · <%= (branches.find(function (b) { return b.id === s.branch; }) || {}).name %></label>
+        <% }) %>
+        <label class="check"><input type="checkbox" name="confirmNewBoy" value="1"> ניין, דאס איז טאקע א נייער בחור</label>
+      </div>
+    <% } %>
+    <div data-new-boy class="<%= v.boyId ? 'hidden' : '' %>">
+      <p class="small muted">אדער לייגט צו א נייעם בחור:</p>
+      <div class="row">
+        <div class="field"><label for="nb-name">נאמען פון נייעם בחור</label><input id="nb-name" name="newBoyName" value="<%= v.newBoyName || '' %>"></div>
+        <div class="field"><label for="nb-branch">סניף פון בחור</label><select id="nb-branch" name="newBoyBranch"><option value="">(ווי דער רעקארד)</option><% branches.forEach(function (b) { %><option value="<%= b.id %>" <%= v.newBoyBranch === b.id ? 'selected' : '' %>><%= b.name %></option><% }) %></select></div>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>שמחה</legend>
+    <div class="row">
+      <div class="field"><label for="o-cat">קאטעגאריע</label>
+        <select id="o-cat" name="categoryId" required><option value="">-- קלייבט --</option>
+        <% allCats.forEach(function (c) { if (!c.enabled && c.id !== v.categoryId) return; %><option value="<%= c.id %>" <%= v.categoryId === c.id ? 'selected' : '' %>><%= c.name %></option><% }) %></select></div>
+      <div class="field"><label for="o-branch">סניף</label>
+        <select id="o-branch" name="branch"><option value="">(ווי דער בחור)</option><% branches.forEach(function (b) { %><option value="<%= b.id %>" <%= v.branch === b.id ? 'selected' : '' %>><%= b.name %></option><% }) %></select></div>
+      <div class="field"><label for="o-status">סטאטוס</label>
+        <select id="o-status" name="status"><option value="published" <%= v.status !== 'hidden' ? 'selected' : '' %>>פובליקירט</option><option value="hidden" <%= v.status === 'hidden' ? 'selected' : '' %>>באהאלטן</option></select></div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>דאטום</legend>
+    <div class="actions">
+      <label class="check"><input type="radio" name="dateMode" value="greg" <%= v.dateMode !== 'heb' ? 'checked' : '' %>> ענגלישער דאטום</label>
+      <label class="check"><input type="radio" name="dateMode" value="heb" <%= v.dateMode === 'heb' ? 'checked' : '' %>> אידישער דאטום</label>
+    </div>
+    <div class="row">
+      <div class="field" data-date-greg><label for="o-date">דאטום</label><input id="o-date" type="date" name="gregDate" value="<%= v.gregDate || '' %>"></div>
+      <div class="field" data-date-heb><label for="o-hd">טאג</label><select id="o-hd" name="hebDay"><option value=""></option><% for (var d = 1; d <= 30; d++) { %><option value="<%= d %>" <%= Number(v.hebDay) === d ? 'selected' : '' %>><%= h.dayText(d) %></option><% } %></select></div>
+      <div class="field" data-date-heb><label for="o-hm">חודש</label><select id="o-hm" name="hebMonth"><option value=""></option><% [7,8,9,10,11,12,13,1,2,3,4,5,6].forEach(function (m) { %><option value="<%= m %>" <%= Number(v.hebMonth) === m ? 'selected' : '' %>><%= m === 12 ? 'אדר / אדר א׳' : h.MONTH_NAMES[m] %></option><% }) %></select></div>
+      <div class="field" data-date-heb><label for="o-hy">יאר</label><select id="o-hy" name="hebYear"><% for (var y = hebYearNow + 1; y >= hebYearNow - 40; y--) { %><option value="<%= y %>" <%= Number(v.hebYear || hebYearNow) === y ? 'selected' : '' %>><%= h.yearText(y) %></option><% } %></select></div>
+    </div>
+    <label class="check"><input type="checkbox" name="afterSunset" value="1" <%= v.afterSunset ? 'checked' : '' %>> די שמחה איז פארגעקומען נאך שקיעה (בייַ נאכט)</label>
+    <div class="hint">ביי אן ענגלישן דאטום: נאך שקיעה ווערט דער אידישער דאטום דער קומענדיגער טאג. ביי אן אידישן דאטום: דער ענגלישער דאטום ווערט דער פריערדיגער אָוונט.</div>
+  </fieldset>
+
+  <fieldset>
+    <legend>משפחה פרטים (נאר פאר שידוך, תנאים, חתונה)</legend>
+    <div class="notice warn small">פריוואטקייט: שרייבט קיינמאל נישט דער ווייבס נאמען אדער א קינדס נאמען. ביי א בן זכר און אפשערן ווערן די פרטים קיינמאל נישט געוויזן.</div>
+    <div class="row">
+      <div class="field"><label for="o-fil">נאמען פון שווער</label><input id="o-fil" name="fatherInLaw" maxlength="160" value="<%= v.fatherInLaw %>"></div>
+      <div class="field"><label for="o-res">וואוינונג</label><input id="o-res" name="residence" maxlength="160" value="<%= v.residence %>"></div>
+    </div>
+    <div class="field"><label for="o-fd">נאך ערלויבטע פרטים</label><input id="o-fd" name="familyDetails" maxlength="400" value="<%= v.familyDetails %>"></div>
+    <label class="check"><input type="checkbox" name="showFamily" value="1" <%= v.showFamily ? 'checked' : '' %>> ווייזן די משפחה פרטים עפנטלעך</label>
+  </fieldset>
+
+  <fieldset>
+    <legend>מודעה טעקסט</legend>
+    <div class="field">
+      <label for="o-text">טעקסט (אויב ליידיג ווערט א טעקסט אויטאמאטיש געשאפן)</label>
+      <textarea id="o-text" name="announcementText" maxlength="4000"><%= v.announcementText %></textarea>
+      <div class="hint">ביי א בן זכר ווערט שטענדיג געוויזן נאר: "… האט געהאט א בן זכר" מיט׳ן דאטום – קיין נאמען פון קינד.</div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>בילדער</legend>
+    <% if (v.mediaIds && v.mediaIds.length) { %>
+    <div class="thumbs">
+      <% v.mediaIds.forEach(function (m) { %>
+      <figure><img src="/admin/media/<%= m %>/thumb.webp" alt=""><figcaption><label class="check"><input type="checkbox" name="removeMedia" value="<%= m %>"> אראפנעמען</label></figcaption></figure>
+      <% }) %>
+    </div>
+    <div class="hint">צו פארביטן א בילד: צייכנט אן "אראפנעמען" און לאדט ארויף א נייע.</div>
+    <% } %>
+    <% if (imp && !v.id && imp.parse_result && imp.parse_result.mediaId) { %>
+      <label class="check"><input type="checkbox" name="attachImportMedia" value="1" checked> צולייגן די בילד(ער) פון דער טעלעגראם פאסט</label>
+    <% } %>
+    <div class="field"><label for="o-pics">ארויפלאדן בילדער</label><input id="o-pics" type="file" name="pictures" accept="image/*" multiple></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>טעלעגראם</legend>
+    <% if (telegramReady) { %>
+      <label class="check"><input type="checkbox" name="sendTelegram" value="1"> שיקן דעם רעקארד צום טעלעגראם קאנאל ווען מען היט אפ</label>
+      <div class="hint">עס ווערט נאר געשיקט ווען איר צייכנט עס אן. דער טעקסט וואס ווערט געשיקט איז דער זעלבער עפנטלעכער טעקסט (מיט די זעלבע פריוואטקייט כללים).</div>
+    <% } else { %><div class="muted small">ארויסשיקן צו טעלעגראם איז נישט מעגליך – דער באט אדער דער קאנאל איז נישט קאנפיגורירט.</div><% } %>
+    <% if (tgLast) { %><div class="small">לעצטע שיקונג: <%- include('_status', { s: tgLast.status }) %> <%= tgLast.error || '' %></div><% } %>
+  </fieldset>
+
+  <div class="actions">
+    <button class="btn gold" type="submit">אפהיטן</button>
+    <a class="btn ghost" href="/admin/occasions">צוריק</a>
+  </div>
+</form>
+<% if (v.id && !v.deletedAt) { %>
+<div class="actions block">
+  <form method="post" action="/admin/occasions/<%= v.id %>/delete" data-confirm="אויסמעקן דעם רעקארד?"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn danger" type="submit">אויסמעקן</button></form>
+</div>
+<p class="small muted">מקור: <%= v.source === 'telegram' ? 'טעלעגראם' : 'מאנועל' %> · באשאפן: <%= new Date(v.createdAt).toLocaleString('he-IL') %> (<%= v.createdBy || '' %>) · געטוישט: <%= new Date(v.updatedAt).toLocaleString('he-IL') %> (<%= v.updatedBy || '' %>)</p>
+<% } %>
+<%- include('_bottom') %>

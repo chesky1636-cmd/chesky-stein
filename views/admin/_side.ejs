@@ -1,0 +1,16 @@
+<nav class="side" aria-label="פארוואלטונג">
+  <a href="/admin" <%- path === '/admin' ? 'aria-current="page"' : '' %>>איבערבליק</a>
+  <a href="/admin/occasions" <%- path.indexOf('/admin/occasions') === 0 ? 'aria-current="page"' : '' %>>רעקארדס</a>
+  <a href="/admin/occasions/new">+ נייער רעקארד</a>
+  <a href="/admin/boys" <%- path.indexOf('/admin/boys') === 0 ? 'aria-current="page"' : '' %>>בחורים</a>
+  <a href="/admin/announcements" <%- path.indexOf('/admin/announcements') === 0 ? 'aria-current="page"' : '' %>>מודעות</a>
+  <a href="/admin/imports" <%- path.indexOf('/admin/imports') === 0 ? 'aria-current="page"' : '' %>>טעלעגראם אימפארטן</a>
+  <a href="/admin/telegram" <%- path === '/admin/telegram' ? 'aria-current="page"' : '' %>>טעלעגראם סטאטוס</a>
+  <% if (admin.isSuper) { %>
+  <span class="sep">הויפט-אדמיניסטראטאר</span>
+  <a href="/admin/categories" <%- path === '/admin/categories' ? 'aria-current="page"' : '' %>>קאטעגאריעס</a>
+  <a href="/admin/duplicates" <%- path === '/admin/duplicates' ? 'aria-current="page"' : '' %>>דופליקאטן</a>
+  <a href="/admin/settings" <%- path === '/admin/settings' ? 'aria-current="page"' : '' %>>איינשטעלונגען</a>
+  <a href="/admin/audit" <%- path === '/admin/audit' ? 'aria-current="page"' : '' %>>אקטיוויטעט</a>
+  <% } %>
+</nav>

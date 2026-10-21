@@ -1,0 +1,57 @@
+<%- include('_top') %>
+<h1>סיסטעם איינשטעלונגען</h1>
+<form class="card block" method="post" action="/admin/settings" enctype="multipart/form-data">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <h2>אלגעמיין</h2>
+  <div class="row">
+    <div class="field"><label for="s-name">נאמען פון דער ישיבה</label><input id="s-name" name="school_name" required maxlength="120" value="<%= s.school_name %>"></div>
+    <div class="field"><label for="s-tag">אונטערשריפט</label><input id="s-tag" name="school_tagline" maxlength="200" value="<%= s.school_tagline %>"></div>
+  </div>
+  <div class="field">
+    <label for="s-logo">אפיציעלער לאגא (ווערט גענוצט איבעראל)</label>
+    <div class="occ-top"><img src="/logo" alt="" width="52" height="60"><input id="s-logo" type="file" name="logo" accept="image/*"></div>
+    <% if (hasLogo) { %><label class="check"><input type="checkbox" name="removeLogo" value="1"> צוריק צום שטאנדארט לאגא</label><% } %>
+  </div>
+  <h2>טעלעגראם</h2>
+  <div class="row">
+    <div class="field"><label for="s-src">ערלויבטע מקור-טשאטס (IDs, קאמע)</label><input id="s-src" name="telegram_source_chat_ids" value="<%= s.telegram_source_chat_ids %>" dir="ltr"><div class="hint">אויב ליידיג: <%= s.env_sources || 'קיינע' %>. דער לעצטער טשאט וואס האט געשיקט: <%= tgStatus.lastChatId || '—' %></div></div>
+    <div class="field"><label for="s-out">ארויסגייענדיגער קאנאל (ID)</label><input id="s-out" name="telegram_outgoing_chat_id" value="<%= s.telegram_outgoing_chat_id %>" dir="ltr"><div class="hint">אויב ליידיג: <%= s.env_outgoing || 'קיינער' %></div></div>
+  </div>
+  <label class="check"><input type="checkbox" name="telegram_auto_publish" value="1" <%= s.telegram_auto_publish ? 'checked' : '' %>> אויטאמאטיש פובליקירן דערקענטע אימפארטן</label>
+  <label class="check"><input type="checkbox" name="telegram_publish_pictures" value="1" <%= s.telegram_publish_pictures ? 'checked' : '' %>> צולייגן בילדער פון טעלעגראם צו די רעקארדס</label>
+  <p class="hint">דער באט טאקען ווערט נאר געהאלטן אין די סערווער סיקרעטס (TELEGRAM_BOT_TOKEN אין ראילוועי) און ווערט קיינמאל נישט געוויזן.</p>
+  <button class="btn gold" type="submit">אפהיטן</button>
+</form>
+
+<form class="card block" method="post" action="/admin/settings/branches">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <h2>די פיר סניפים</h2>
+  <p class="hint">עס זענען שטענדיג פונקט פיר סניפים. מען קען טוישן זייערע נעמען און די ווערטער מיט וועלכע מען דערקענט זיי אין טעלעגראם.</p>
+  <% branches.forEach(function (b) { %>
+  <div class="row">
+    <div class="field"><label for="br-n-<%= b.id %>">נאמען</label><input id="br-n-<%= b.id %>" name="name_<%= b.id %>" required maxlength="60" value="<%= b.name %>"></div>
+    <div class="field"><label for="br-d-<%= b.id %>">באשרייבונג</label><input id="br-d-<%= b.id %>" name="desc_<%= b.id %>" maxlength="500" value="<%= b.description %>"></div>
+    <div class="field"><label for="br-k-<%= b.id %>">טעלעגראם ווערטער (קאמע)</label><input id="br-k-<%= b.id %>" name="kw_<%= b.id %>" value="<%= (b.keywords || []).join(', ') %>"></div>
+  </div>
+  <% }) %>
+  <button class="btn gold" type="submit">אפהיטן סניפים</button>
+</form>
+
+<form class="card block" method="post" action="/admin/settings/pins" autocomplete="off">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <h2>טוישן פין-קאד</h2>
+  <div class="row">
+    <div class="field"><label for="p-role">פאר</label><select id="p-role" name="role"><option value="admin">אדמיניסטראטאר</option><option value="super">הויפט-אדמיניסטראטאר</option></select></div>
+    <div class="field"><label for="p-cur">אייער איצטיגער הויפט-פין</label><input id="p-cur" type="password" name="current" inputmode="numeric" required></div>
+    <div class="field"><label for="p-new">נייער פין (6-12 ציפערן)</label><input id="p-new" type="password" name="pin" inputmode="numeric" pattern="[0-9]{6,12}" required></div>
+    <div class="field"><label for="p-new2">נאכאמאל</label><input id="p-new2" type="password" name="pin2" inputmode="numeric" pattern="[0-9]{6,12}" required></div>
+  </div>
+  <button class="btn" type="submit">טוישן</button>
+</form>
+
+<div class="card block">
+  <h2>באקאפ</h2>
+  <p>ראילוועי'ס דאטנבאזע מאכט אליין באקאפס. דא קען מען אראפלאדן אן עקסטערע קאפיע פון אלע רעקארדס.</p>
+  <div class="actions"><a class="btn" href="/admin/backup.json">אראפלאדן (אן בילדער)</a><a class="btn ghost" href="/admin/backup.json?media=1">אראפלאדן מיט בילדער</a></div>
+</div>
+<%- include('_bottom') %>

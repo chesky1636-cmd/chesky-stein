@@ -1,0 +1,2 @@
+<% var map = { recognized: ['ok', 'דערקענט און פובליקירט'], corrected: ['ok', 'פאררעכט'], needs_review: ['warn', 'דארף קאנטראל'], ignored: ['', 'איגנארירט'], error: ['bad', 'טעות'], echo: ['', 'אייגענע פאסט'], sent: ['ok', 'געשיקט'], pending: ['warn', 'ווארט'], sending: ['warn', 'שיקט'], failed: ['bad', 'דורכגעפאלן'], published: ['ok', 'פובליקירט'], hidden: ['', 'באהאלטן'] }; var m = map[s] || ['', s]; %>
+<span class="tag <%= m[0] %>"><%= m[1] %></span>

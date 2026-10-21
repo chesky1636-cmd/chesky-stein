@@ -1,0 +1,29 @@
+<%- include('partials/head') %>
+<div class="wrap">
+  <section class="block">
+    <div class="small muted"><a href="/">היים</a> › <a href="/feed?category=<%= occ.category.key %>"><%= occ.category.name %></a></div>
+    <div class="card pad-lg">
+      <div class="occ-top">
+        <% if (occ.boy.photo) { %><img class="avatar lg" src="<%= occ.boy.photo %>" alt="" width="120" height="120"><% } else { %><span class="avatar lg" aria-hidden="true"><%= occ.boy.name.trim().charAt(0) %></span><% } %>
+        <div>
+          <span class="tag cat-<%= occ.category.kind %>"><%= occ.category.name %></span>
+          <h1><a href="<%= occ.boy.url %>"><%= occ.boy.name %></a></h1>
+          <a class="tag" href="<%= occ.branch.url %>"><%= occ.branch.name %></a>
+        </div>
+      </div>
+      <div class="ornament">✦</div>
+      <p class="occ-text"><%= occ.text %></p>
+      <% if (occ.family) { %>
+      <div class="family">
+        <% if (occ.family.fatherInLaw) { %><div>שווער: <strong><%= occ.family.fatherInLaw %></strong></div><% } %>
+        <% if (occ.family.residence) { %><div>וואוינונג: <%= occ.family.residence %></div><% } %>
+        <% if (occ.family.details) { %><div><%= occ.family.details %></div><% } %>
+      </div>
+      <% } %>
+      <p class="occ-meta"><span class="heb"><%= occ.date.hebrew %></span><span>· <%= occ.date.weekday %>, <%= occ.date.greg %></span><% if (occ.date.afterSunset) { %><span>· נאך שקיעה</span><% } %></p>
+      <% if (occ.pictures.length) { %><div class="big-pics"><% occ.pictures.forEach(function (p) { %><a href="<%= p.url %>"><img src="<%= p.thumb %>" alt="בילד פון דער שמחה" loading="lazy"></a><% }) %></div><% } %>
+      <div class="actions"><a class="btn ghost" href="<%= occ.boy.url %>">אלע שמחות פון <%= occ.boy.name %></a><% if (admin) { %><a class="btn ghost" href="/admin/occasions/<%= occ.id %>/edit">רעדאקטירן</a><% } %></div>
+    </div>
+  </section>
+</div>
+<%- include('partials/foot') %>

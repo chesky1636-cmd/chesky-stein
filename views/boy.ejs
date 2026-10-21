@@ -1,0 +1,22 @@
+<%- include('partials/head') %>
+<div class="wrap">
+  <section class="block card pad-lg">
+    <div class="profile-head">
+      <% if (boy.photo) { %><span class="avatar lg"><img src="<%= boy.photo %>" alt="בילד פון <%= boy.name %>" width="120" height="120"></span><% } else { %><span class="avatar lg" aria-hidden="true"><%= boy.name.trim().charAt(0) %></span><% } %>
+      <div>
+        <div class="small muted"><a href="/">היים</a> › <a href="<%= boy.branch.url %>"><%= boy.branch.name %></a></div>
+        <h1><%= boy.name %></h1>
+        <div class="occ-meta"><a class="tag gold" href="<%= boy.branch.url %>"><%= boy.branch.name %></a><span><%= timeline.length %> שמחות</span></div>
+        <% if (aliases.length) { %><div class="small muted">אויך געשריבן: <%= aliases.join(' · ') %></div><% } %>
+        <% if (admin) { %><div class="actions"><a class="btn ghost sm" href="/admin/boys/<%= boy.id %>">רעדאקטירן</a><a class="btn ghost sm" href="/admin/occasions/new?boy=<%= boy.id %>">+ שמחה</a></div><% } %>
+      </div>
+    </div>
+  </section>
+  <section class="block" aria-labelledby="tl-h">
+    <div class="block-head"><h2 id="tl-h">שמחות לויט דער צייט</h2></div>
+    <% if (timeline.length) { %>
+    <ol class="timeline"><% timeline.forEach(function (o) { %><li><%- include('partials/occ-card', { o: o }) %></li><% }) %></ol>
+    <% } else { %><div class="empty">נאך קיין שמחות פארצייכנט.</div><% } %>
+  </section>
+</div>
+<%- include('partials/foot') %>
