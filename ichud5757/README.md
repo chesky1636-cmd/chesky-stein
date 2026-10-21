@@ -32,7 +32,7 @@ A public, fully right-to-left Yiddish website for the school's four branches. It
 
 ## Deploying on Railway
 
-1. Create a new Railway project from this GitHub repo.
+1. Create a new Railway project from this GitHub repo. The app lives in the `ichud5757` folder, so in the service's Settings → Source set **Root Directory** to `/ichud5757`.
 2. Add a **PostgreSQL** database to the project. In the web service's Variables, set `DATABASE_URL=${{Postgres.DATABASE_URL}}`.
 3. Under Settings → Networking, generate a public domain. Railway then sets `RAILWAY_PUBLIC_DOMAIN`, which the app uses for the Telegram webhook.
 4. Set these variables:
